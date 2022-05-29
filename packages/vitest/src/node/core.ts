@@ -47,6 +47,8 @@ export class Vitest {
   restartsCount = 0
   runner: ViteNodeRunner = undefined!
 
+  projects?: Vitest[]
+
   private _onRestartListeners: Array<() => void> = []
 
   constructor() {

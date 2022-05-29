@@ -1,7 +1,8 @@
-import { resolve } from 'pathe'
+import { dirname, resolve } from 'pathe'
 import { createServer, mergeConfig } from 'vite'
 import type { InlineConfig as ViteInlineConfig, UserConfig as ViteUserConfig } from 'vite'
 import { findUp } from 'find-up'
+import fg from 'fast-glob'
 import type { UserConfig } from '../types'
 import { configFiles } from '../constants'
 import { Vitest } from './core'
@@ -29,6 +30,37 @@ export async function createVitest(options: UserConfig, viteOverrides: ViteUserC
     await server.listen()
   else
     await server.pluginContainer.buildStart({})
+
+  return ctx
+}
+
+export async function createVitestProjects(options: UserConfig, viteOverrides: ViteUserConfig = {}) {
+  const ctx = await createVitest(options, viteOverrides)
+
+  if (ctx.config.projects.length) {
+    const inputs = ctx.config.projects
+    const files = (await fg(inputs, {
+      cwd: options.root,
+      onlyFiles: true,
+      ignore: [
+        '**/node_modules/**',
+      ],
+    })).sort()
+
+    ctx.projects = await Promise.all(
+      files.map(async (project) => {
+        const projectOptions = {
+          ...options,
+          root: dirname(project),
+          config: project,
+        }
+        const ctx = await createVitest(projectOptions, viteOverrides)
+        if (ctx.config.projects.length)
+          throw new Error(`Nested projects are not supported. Defined in ${project}`)
+        return ctx
+      }),
+    )
+  }
 
   return ctx
 }

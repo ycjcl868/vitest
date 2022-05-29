@@ -23,6 +23,16 @@ export interface EnvironmentOptions {
 
 export interface InlineConfig {
   /**
+   * Name of the project. Will infer from the current working directory if not provided.
+   */
+  name?: string
+
+  /**
+   * Paths of multiple configure files
+   */
+  projects?: string[]
+
+  /**
    * Include globs for test files
    *
    * @default ['**\/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}']

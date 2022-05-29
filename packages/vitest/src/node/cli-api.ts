@@ -1,7 +1,7 @@
 import type { UserConfig as ViteUserConfig } from 'vite'
 import type { UserConfig } from '../types'
 import { ensurePackageInstalled } from '../utils'
-import { createVitest } from './create'
+import { createVitestProjects } from './create'
 import { registerConsoleShortcuts } from './stdin'
 
 export interface CliOptions extends UserConfig {
@@ -27,7 +27,7 @@ export async function startVitest(cliFilters: string[], options: CliOptions, vit
   if (typeof options.coverage === 'boolean')
     options.coverage = { enabled: options.coverage }
 
-  const ctx = await createVitest(options, viteOverrides)
+  const ctx = await createVitestProjects(options, viteOverrides)
 
   if (ctx.config.coverage.enabled) {
     if (!await ensurePackageInstalled('c8')) {
@@ -36,14 +36,17 @@ export async function startVitest(cliFilters: string[], options: CliOptions, vit
     }
   }
 
-  if (ctx.config.environment && ctx.config.environment !== 'node') {
-    if (!await ensurePackageInstalled(ctx.config.environment)) {
+  const environments = new Set([ctx.config.environment, ...ctx.projects?.map(p => p.config.environment) || []])
+  for (const env of environments) {
+    if (!env || env === 'node')
+      continue
+    if (!await ensurePackageInstalled(env)) {
       process.exitCode = 1
       return false
     }
   }
 
-  if (process.stdin.isTTY && ctx.config.watch)
+  if (process.stdin.isTTY && options.watch)
     registerConsoleShortcuts(ctx)
 
   ctx.onServerRestarted(() => {
