@@ -11,7 +11,7 @@
     "prefetch": "esno .vitepress/scripts/fetch-avatars.ts"
   },
   "dependencies": {
-    "@vueuse/core": "^8.9.3",
+    "@vueuse/core": "^8.9.4",
     "vue": "^3.2.37"
   },
   "devDependencies": {

@@ -98,7 +98,7 @@
   },
   "devDependencies": {
     "@antfu/install-pkg": "^0.1.0",
-    "@edge-runtime/vm": "1.1.0-beta.11",
+    "@edge-runtime/vm": "1.1.0-beta.12",
     "@sinonjs/fake-timers": "^9.1.2",
     "@types/diff": "^5.0.2",
     "@types/jsdom": "^16.2.14",
@@ -117,7 +117,7 @@
     "fast-glob": "^3.2.11",
     "find-up": "^6.3.0",
     "flatted": "^3.2.6",
-    "happy-dom": "^6.0.3",
+    "happy-dom": "^6.0.4",
     "jsdom": "^19.0.0",
     "log-update": "^5.0.1",
     "magic-string": "^0.26.2",
